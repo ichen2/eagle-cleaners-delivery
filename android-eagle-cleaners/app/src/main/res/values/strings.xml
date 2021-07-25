@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">EagleCleaners</string>
+    <string name="admin_login">Admin Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="manage_delivery_requests">Manage Delivery Requests</string>
+</resources>
