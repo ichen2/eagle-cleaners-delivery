@@ -1,36 +1,36 @@
 package com.eaglecleaners.app
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
-import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.model.LatLng
 
-// TODO: Add google map and a form for the delivery request
+// TODO: Add a form for the delivery request
 class RequestDeliveryActivity : AppCompatActivity() {
-    private lateinit var db: FirebaseFirestore
-    private lateinit var service: RequestDeliveryService
+
+    private val viewModel: RequestDeliveryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_delivery)
         val adminButton: Button = findViewById(R.id.btn_admin)
         adminButton.setOnClickListener {
-            if(getSharedPreferences("loginStatus", Context.MODE_PRIVATE).getBoolean("isLoggedIn", false)) {
+            if (getSharedPreferences("loginStatus", Context.MODE_PRIVATE).getBoolean(
+                    "isLoggedIn",
+                    false
+                )
+            ) {
                 startActivity(Intent(this, ManageRequestsActivity::class.java))
             } else {
                 startActivity(Intent(this, AdminLoginActivity::class.java))
@@ -38,53 +38,75 @@ class RequestDeliveryActivity : AppCompatActivity() {
         }
         val requestButton: Button = findViewById(R.id.btn_request)
         requestButton.setOnClickListener {
-            requestDelivery(DeliveryRequest("John Cena", "Ur moms house", 100))
+            viewModel.requestDelivery(DeliveryRequest("John Cena", "Ur moms house", 100))
         }
-        db = Firebase.firestore
-        // TODO: Create string resources for api endpoints
-        service = Retrofit.Builder()
-            .baseUrl("https://us-central1-eagle-cleaners-b141c.cloudfunctions.net/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(RequestDeliveryService::class.java)
-        getToken()
+        checkLocationPermission()
+        // TODO: This logic could probably be simplified
+        LocationServices.getFusedLocationProviderClient(this).lastLocation
+            .addOnSuccessListener { location: Location? ->
+                viewModel.initializeMap(
+                    (fragmentManager.findFragmentById(R.id.map) as MapFragment),
+                    LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
+                )
+            }.addOnFailureListener {
+                viewModel.initializeMap((fragmentManager.findFragmentById(R.id.map) as MapFragment))
+            }
     }
 
-    // TODO: Remove this whenever done debugging
-    private fun getToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
+    private fun checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                AlertDialog.Builder(this)
+                    .setTitle("Location Permission Needed")
+                    .setMessage("This app needs the Location permission, please accept to use location functionality")
+                    .setPositiveButton(
+                        "OK"
+                    ) { _, _ ->
+                        //Prompt the user once explanation has been shown
+                        requestLocationPermission()
+                    }
+                    .create()
+                    .show()
+            } else {
+                // No explanation needed, we can request the permission.
+                requestLocationPermission()
             }
-
-            // Get new FCM registration token
-            val msg = task.result ?: "Error"
-            Log.d(TAG, msg)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-        })
+        }
     }
 
-    fun requestDelivery(deliveryRequest: DeliveryRequest) {
-        service.requestDelivery(deliveryRequest.name, deliveryRequest.time).enqueue(object : Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                println("Delivery requested")
-            }
-            // TODO: Improve error handling, maybe make response more robust
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                throw t
-            }
-
-        })
+    private fun requestLocationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ),
+                MY_PERMISSIONS_REQUEST_LOCATION
+            )
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                MY_PERMISSIONS_REQUEST_LOCATION
+            )
+        }
     }
 
     companion object {
-        val TAG = "RequestDelivery"
-    }
-
-    // TODO: Add remaining fields
-    interface RequestDeliveryService {
-        @GET("requestDelivery/")
-        fun requestDelivery(@Query("name") name : String, @Query("time") time : Long): Call<Boolean>
+        private const val TAG = "RequestDelivery"
+        private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
     }
 }

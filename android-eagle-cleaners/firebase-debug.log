@@ -29,3 +29,5 @@ You're about to initialize a Firebase project in this directory:
 [info] 
 [debug] [2021-07-25T05:05:09.612Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
 [debug] [2021-07-25T05:05:09.612Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2021-07-25T10:52:56.427Z] Error: read EIO
+    at TTY.onStreamRead (node:internal/stream_base_commons:211:20)
