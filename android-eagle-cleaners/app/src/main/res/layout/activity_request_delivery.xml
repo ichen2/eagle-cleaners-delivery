@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".RequestDeliveryActivity">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_admin"
         android:background="@drawable/round_button"
         android:layout_width="100dp"
@@ -18,20 +18,95 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
-    <Button
-        android:id="@+id/btn_request"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_open_form"
         android:background="@drawable/round_button"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <fragment
         android:id="@+id/map"
+        class="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <LinearLayout
+        android:id="@+id/info_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/top_rounded_corners"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_close_form"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/back_arrow"
+            android:paddingBottom="4dp"
+            android:backgroundTint="@color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="24dp"
+            android:text="Please enter your information"
+            android:paddingBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:text="Name" />
+
+        <EditText
+            android:id="@+id/name_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:text="Address" />
+
+        <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
+            android:id="@+id/address_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:pacv_googleMapsApiKey="@string/maps_api_key"
+            style="@style/Widget.PlacesAutoCompleteTextView.Styled"
+            android:maxLines="1"
+            android:textColor="@color/black" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_request"
+            android:background="@drawable/rounded_corners_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Request delivery"
+            android:textColor="@color/white"
+            android:layout_marginTop="24dp"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

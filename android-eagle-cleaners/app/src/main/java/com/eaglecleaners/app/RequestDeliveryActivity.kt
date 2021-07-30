@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -16,10 +18,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
 
-// TODO: Add a form for the delivery request
+// TODO: Add themeing, define string resources
 class RequestDeliveryActivity : AppCompatActivity() {
 
     private val viewModel: RequestDeliveryViewModel by viewModels()
+    lateinit var openFormButton : Button
+    lateinit var infoForm : LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +39,15 @@ class RequestDeliveryActivity : AppCompatActivity() {
             } else {
                 startActivity(Intent(this, AdminLoginActivity::class.java))
             }
+        }
+        infoForm = findViewById(R.id.info_form)
+        openFormButton = findViewById(R.id.btn_open_form)
+        openFormButton.setOnClickListener {
+            setFormVisibility(true)
+        }
+        val closeFormButton : Button = findViewById(R.id.btn_close_form)
+        closeFormButton.setOnClickListener {
+            setFormVisibility(false)
         }
         val requestButton: Button = findViewById(R.id.btn_request)
         requestButton.setOnClickListener {
@@ -102,6 +115,16 @@ class RequestDeliveryActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSIONS_REQUEST_LOCATION
             )
+        }
+    }
+
+    private fun setFormVisibility(showForm : Boolean) {
+        if (showForm) {
+            openFormButton.visibility = View.GONE
+            infoForm.visibility = View.VISIBLE
+        } else {
+            openFormButton.visibility = View.VISIBLE
+            infoForm.visibility = View.GONE
         }
     }
 

@@ -16,4 +16,9 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+    <style name="Widget.PlacesAutoCompleteTextView.Styled"
+        parent="PACV.Widget.PlacesAutoCompleteTextView">
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/purple_700</item>
+    </style>
 </resources>

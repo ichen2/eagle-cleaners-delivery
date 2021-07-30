@@ -5,4 +5,5 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="manage_delivery_requests">Manage Delivery Requests</string>
+    <string name="maps_api_key">AIzaSyAKGdfW8Z_95_vDwI0cUME69yvoHnB4yOk</string>
 </resources>
