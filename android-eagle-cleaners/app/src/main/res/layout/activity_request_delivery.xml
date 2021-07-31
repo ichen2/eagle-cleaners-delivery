@@ -43,7 +43,7 @@
     <LinearLayout
         android:id="@+id/info_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:text="Address" />
 
         <com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
@@ -96,7 +96,9 @@
             app:pacv_googleMapsApiKey="@string/maps_api_key"
             style="@style/Widget.PlacesAutoCompleteTextView.Styled"
             android:maxLines="1"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            app:pacv_clearEnabled="true"
+            app:pacv_adapterClass="com.eaglecleaners.app.PlacesAutoCompleteAdapter" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_request"

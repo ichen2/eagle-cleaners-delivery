@@ -17,13 +17,15 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
 
 // TODO: Add themeing, define string resources
 class RequestDeliveryActivity : AppCompatActivity() {
 
     private val viewModel: RequestDeliveryViewModel by viewModels()
-    lateinit var openFormButton : Button
-    lateinit var infoForm : LinearLayout
+    private lateinit var openFormButton : Button
+    private lateinit var infoForm : LinearLayout
+    private lateinit var addressField : PlacesAutocompleteTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +55,7 @@ class RequestDeliveryActivity : AppCompatActivity() {
         requestButton.setOnClickListener {
             viewModel.requestDelivery(DeliveryRequest("John Cena", "Ur moms house", 100))
         }
+        addressField = findViewById(R.id.address_field)
         checkLocationPermission()
         // TODO: This logic could probably be simplified
         LocationServices.getFusedLocationProviderClient(this).lastLocation
@@ -61,6 +64,9 @@ class RequestDeliveryActivity : AppCompatActivity() {
                     (fragmentManager.findFragmentById(R.id.map) as MapFragment),
                     LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
                 )
+                if(location != null) {
+                    addressField.currentLocation = location
+                }
             }.addOnFailureListener {
                 viewModel.initializeMap((fragmentManager.findFragmentById(R.id.map) as MapFragment))
             }
