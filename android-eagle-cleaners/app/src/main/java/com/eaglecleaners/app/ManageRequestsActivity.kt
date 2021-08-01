@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 
+// TODO: Add notifications for new requests, make address text a link to open google maps
 class ManageRequestsActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore

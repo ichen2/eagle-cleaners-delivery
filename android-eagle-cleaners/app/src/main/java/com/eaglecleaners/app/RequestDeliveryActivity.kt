@@ -88,6 +88,7 @@ class RequestDeliveryActivity : AppCompatActivity() {
         addressField = findViewById(R.id.address_field)
         addressField.setOnPlaceSelectedListener { place ->
             viewModel.selectedPlace = place
+            // TODO: Have map focus on selected place
         }
         addressField.setOnClearListener {
             viewModel.selectedPlace = null
