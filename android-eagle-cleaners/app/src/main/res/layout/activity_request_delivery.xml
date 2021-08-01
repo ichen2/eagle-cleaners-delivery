@@ -45,20 +45,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/top_rounded_corners"
+        android:background="@drawable/rounded_corners"
         android:padding="24dp"
+        android:layout_margin="24dp"
         android:visibility="gone">
 
         <Button
             android:id="@+id/btn_close_form"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/back_arrow"
-            android:paddingBottom="4dp"
-            android:backgroundTint="@color/black" />
+            android:drawable="@drawable/close"
+            android:paddingBottom="4dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -79,8 +79,10 @@
             android:id="@+id/name_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:maxLines="1"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:imeOptions="actionNext" />
 
         <TextView
             android:layout_width="match_parent"
@@ -95,6 +97,7 @@
             android:layout_height="wrap_content"
             app:pacv_googleMapsApiKey="@string/maps_api_key"
             style="@style/Widget.PlacesAutoCompleteTextView.Styled"
+            android:inputType="text"
             android:maxLines="1"
             android:textColor="@color/black"
             app:pacv_clearEnabled="true"

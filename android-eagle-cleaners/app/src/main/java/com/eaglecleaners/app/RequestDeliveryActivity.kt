@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -17,21 +18,28 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.GeoPoint
+import com.seatgeek.placesautocomplete.DetailsCallback
+import com.seatgeek.placesautocomplete.OnPlaceSelectedListener
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
+import com.seatgeek.placesautocomplete.model.PlaceDetails
 
 // TODO: Add themeing, define string resources
 class RequestDeliveryActivity : AppCompatActivity() {
 
     private val viewModel: RequestDeliveryViewModel by viewModels()
-    private lateinit var openFormButton : Button
-    private lateinit var infoForm : LinearLayout
-    private lateinit var addressField : PlacesAutocompleteTextView
+    private lateinit var openFormButton: Button
+    private lateinit var openLoginButton: Button
+    private lateinit var infoForm: LinearLayout
+    private lateinit var addressField: PlacesAutocompleteTextView
+    private lateinit var nameField: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // TODO: Organize this
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_delivery)
-        val adminButton: Button = findViewById(R.id.btn_admin)
-        adminButton.setOnClickListener {
+        openLoginButton = findViewById(R.id.btn_admin)
+        openLoginButton.setOnClickListener {
             if (getSharedPreferences("loginStatus", Context.MODE_PRIVATE).getBoolean(
                     "isLoggedIn",
                     false
@@ -47,15 +55,44 @@ class RequestDeliveryActivity : AppCompatActivity() {
         openFormButton.setOnClickListener {
             setFormVisibility(true)
         }
-        val closeFormButton : Button = findViewById(R.id.btn_close_form)
+        val closeFormButton: Button = findViewById(R.id.btn_close_form)
         closeFormButton.setOnClickListener {
             setFormVisibility(false)
         }
         val requestButton: Button = findViewById(R.id.btn_request)
         requestButton.setOnClickListener {
-            viewModel.requestDelivery(DeliveryRequest("John Cena", "Ur moms house", 100))
+            addressField.getDetailsFor(viewModel.selectedPlace, object : DetailsCallback {
+                override fun onSuccess(placeDetails: PlaceDetails?) {
+                    if(placeDetails != null) {
+                        viewModel.requestDelivery(
+                            DeliveryRequest(
+                                nameField.text.toString(),
+                                DeliveryLocation(
+                                    placeDetails.name,
+                                    GeoPoint(
+                                        placeDetails.geometry.location.lat,
+                                        placeDetails.geometry.location.lng
+                                    )
+                                ),
+                                System.currentTimeMillis()
+                            )
+                        )
+                    }
+                }
+
+                override fun onFailure(p0: Throwable?) {
+                    if(p0 != null) throw p0
+                }
+            })
         }
         addressField = findViewById(R.id.address_field)
+        addressField.setOnPlaceSelectedListener { place ->
+            viewModel.selectedPlace = place
+        }
+        addressField.setOnClearListener {
+            viewModel.selectedPlace = null
+        }
+        nameField = findViewById(R.id.name_field)
         checkLocationPermission()
         // TODO: This logic could probably be simplified
         LocationServices.getFusedLocationProviderClient(this).lastLocation
@@ -64,7 +101,7 @@ class RequestDeliveryActivity : AppCompatActivity() {
                     (fragmentManager.findFragmentById(R.id.map) as MapFragment),
                     LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
                 )
-                if(location != null) {
+                if (location != null) {
                     addressField.currentLocation = location
                 }
             }.addOnFailureListener {
@@ -124,12 +161,14 @@ class RequestDeliveryActivity : AppCompatActivity() {
         }
     }
 
-    private fun setFormVisibility(showForm : Boolean) {
+    private fun setFormVisibility(showForm: Boolean) {
         if (showForm) {
             openFormButton.visibility = View.GONE
+            openLoginButton.visibility = View.GONE
             infoForm.visibility = View.VISIBLE
         } else {
             openFormButton.visibility = View.VISIBLE
+            openLoginButton.visibility = View.VISIBLE
             infoForm.visibility = View.GONE
         }
     }

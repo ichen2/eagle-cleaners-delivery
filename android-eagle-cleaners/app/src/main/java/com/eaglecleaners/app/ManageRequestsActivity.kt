@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
@@ -29,7 +30,7 @@ class ManageRequestsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_manage_requests)
         recyclerView = findViewById(R.id.delivery_request_list)
         swipeContainer = findViewById(R.id.swipe_container)
-        adapter = DeliveryRequestAdapter(requests)
+        adapter = DeliveryRequestAdapter(requests, this)
         recyclerView.adapter = adapter
         db = Firebase.firestore
         swipeContainer.setOnRefreshListener { getRequests() }
@@ -61,11 +62,11 @@ class ManageRequestsActivity : AppCompatActivity() {
                 // TODO: Instead of completely recreating list, this should just update it, adding the new requests
                 requests.clear()
                 requests.addAll(documents.map { document ->
-                    // TODO: Maybe set up parsing for DeliveryRequest
                     DeliveryRequest(
                         document.getString("name") ?: "Error",
-                        document.getString("address") ?: "",
-                        document.getLong("time") ?: Long.MAX_VALUE
+                        DeliveryLocation(document.getString("addressName") ?: "", document.getGeoPoint("addressCoordinates") ?: GeoPoint(0.0, 0.0)),
+                        document.getLong("time") ?: Long.MAX_VALUE,
+                        document.id
                     )
                 })
                 adapter.notifyDataSetChanged()
@@ -75,6 +76,18 @@ class ManageRequestsActivity : AppCompatActivity() {
                 // TODO: Add a toast for this error
                 Log.w(TAG, "Error getting documents: ", exception)
                 swipeContainer.isRefreshing = false // TODO: Check if there's a 'finally' equivalent for this to prevent repeat of this line
+            }
+    }
+
+    fun removeRequest(position: Int) {
+        db.collection("delivery-requests").document(requests[position].id)
+            .delete()
+            .addOnSuccessListener {
+                requests.removeAt(position)
+                adapter.notifyItemRemoved(position)
+            }
+            .addOnFailureListener {
+                    e -> Log.w(TAG, "Error deleting document", e)
             }
     }
 

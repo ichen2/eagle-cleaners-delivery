@@ -1,43 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.chauthai.swipereveallayout.SwipeRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:padding="4dp"
-    android:orientation="horizontal"
-    android:gravity="left">
-
-    <LinearLayout
+    app:mode="same_level"
+    app:dragEdge="right">
+    <FrameLayout
+        android:id="@+id/close_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
-        <TextView
-            android:id="@+id/delivery_requester_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            tools:text="Ian Chen"
-            android:textColor="@color/black"
-            android:text=""/>
-
-        <TextView
-            android:id="@+id/delivery_requester_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/purple_700"
-            tools:text="303 Demong Dr"
-            android:text="" />
-    </LinearLayout>
-    <TextView
-        android:id="@+id/delivery_requester_time"
+        android:background="#FF0000"
+        android:paddingHorizontal="40dp"
+        android:clickable="true"
+        android:focusable="true">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/close"
+            app:tint="@color/white"
+            android:layout_gravity="center"
+            android:contentDescription="remove request" />
+    </FrameLayout>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="16sp"
-        tools:text="Requested 4 hours ago"
-        android:textColor="@color/purple_700"
-        android:text=""
-        android:gravity="end" />
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="12dp"
+        android:orientation="horizontal"
+        android:gravity="start">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+            <TextView
+                android:id="@+id/delivery_requester_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                tools:text="Ian Chen"
+                android:textColor="@color/black"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/delivery_requester_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/purple_700"
+                tools:text="303 Demong Dr"
+                android:text="" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/delivery_requester_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="16sp"
+            tools:text="Requested 4 hours ago"
+            android:textColor="@color/purple_700"
+            android:text=""
+            android:gravity="end" />
+    </LinearLayout>
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

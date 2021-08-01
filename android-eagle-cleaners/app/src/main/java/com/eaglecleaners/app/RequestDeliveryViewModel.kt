@@ -8,6 +8,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.GeoPoint
+import com.seatgeek.placesautocomplete.model.Place
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,15 +24,16 @@ private const val REQUEST_DELIVERY_ENDPOINT = "requestDelivery/"
 
 class RequestDeliveryViewModel : ViewModel() {
 
-    private lateinit var map : GoogleMap
-    private val service : RequestDeliveryService = Retrofit.Builder()
+    private lateinit var map: GoogleMap
+    var selectedPlace: Place? = null
+    private val service: RequestDeliveryService = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(RequestDeliveryService::class.java)
 
     fun initializeMap(mapFragment: MapFragment, latLng: LatLng = LatLng(0.0, 0.0)) {
-        if(!this::map.isInitialized) {
+        if (!this::map.isInitialized) {
             mapFragment.getMapAsync {
                 map = it
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
@@ -41,20 +44,35 @@ class RequestDeliveryViewModel : ViewModel() {
     // TODO: Add remaining fields
     interface RequestDeliveryService {
         @GET(REQUEST_DELIVERY_ENDPOINT)
-        fun requestDelivery(@Query("name") name : String, @Query("time") time : Long): Call<Boolean>
+        fun requestDelivery(
+            @Query("name") name: String,
+            @Query("addressName") addressName: String,
+            @Query("addressLat") addressLat: Double,
+            @Query("addressLng") addressLng: Double,
+            @Query("time") time: Long
+        ): Call<Boolean>
     }
 
     fun requestDelivery(deliveryRequest: DeliveryRequest) {
-        service.requestDelivery(deliveryRequest.name, deliveryRequest.time).enqueue(object :
-            Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                println("Delivery requested")
-            }
-            // TODO: Improve error handling, maybe make response more robust
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                throw t
-            }
+        service.requestDelivery(
+            deliveryRequest.name,
+            deliveryRequest.address.name,
+            deliveryRequest.address.coordinates.latitude,
+            deliveryRequest.address.coordinates.longitude,
+            deliveryRequest.time
+        )
+            .enqueue(object :
+                Callback<Boolean> {
+                override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                    println("Delivery requested")
+                    println(response.raw().toString())
+                }
 
-        })
+                // TODO: Improve error handling, maybe make response more robust
+                override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                    throw t
+                }
+
+            })
     }
 }
