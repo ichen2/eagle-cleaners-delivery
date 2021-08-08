@@ -110,7 +110,15 @@
             android:layout_height="wrap_content"
             android:text="Request delivery"
             android:textColor="@color/white"
-            android:layout_marginTop="24dp"/>
+            android:layout_marginTop="24dp" />
+
+        <ProgressBar
+            android:id="@+id/request_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 

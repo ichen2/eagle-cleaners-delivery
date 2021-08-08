@@ -11,10 +11,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -30,6 +32,8 @@ class RequestDeliveryActivity : AppCompatActivity() {
     private val viewModel: RequestDeliveryViewModel by viewModels()
     private lateinit var openFormButton: Button
     private lateinit var openLoginButton: Button
+    private lateinit var requestButton: Button
+    private lateinit var requestProgressBar: ProgressBar
     private lateinit var infoForm: LinearLayout
     private lateinit var addressField: PlacesAutocompleteTextView
     private lateinit var nameField: EditText
@@ -59,36 +63,15 @@ class RequestDeliveryActivity : AppCompatActivity() {
         closeFormButton.setOnClickListener {
             setFormVisibility(false)
         }
-        val requestButton: Button = findViewById(R.id.btn_request)
+        requestButton = findViewById(R.id.btn_request)
         requestButton.setOnClickListener {
-            addressField.getDetailsFor(viewModel.selectedPlace, object : DetailsCallback {
-                override fun onSuccess(placeDetails: PlaceDetails?) {
-                    if(placeDetails != null) {
-                        viewModel.requestDelivery(
-                            DeliveryRequest(
-                                nameField.text.toString(),
-                                DeliveryLocation(
-                                    placeDetails.name,
-                                    GeoPoint(
-                                        placeDetails.geometry.location.lat,
-                                        placeDetails.geometry.location.lng
-                                    )
-                                ),
-                                System.currentTimeMillis()
-                            )
-                        )
-                    }
-                }
-
-                override fun onFailure(p0: Throwable?) {
-                    if(p0 != null) throw p0
-                }
-            })
+            viewModel.requestDelivery(nameField.text.toString())
         }
+        requestProgressBar = findViewById(R.id.request_progress_bar)
         addressField = findViewById(R.id.address_field)
         addressField.setOnPlaceSelectedListener { place ->
             viewModel.selectedPlace = place
-            // TODO: Have map focus on selected place
+            addressField.getDetailsFor(place, viewModel.detailsCallback)
         }
         addressField.setOnClearListener {
             viewModel.selectedPlace = null
@@ -108,6 +91,10 @@ class RequestDeliveryActivity : AppCompatActivity() {
             }.addOnFailureListener {
                 viewModel.initializeMap((fragmentManager.findFragmentById(R.id.map) as MapFragment))
             }
+        viewModel.requestIsLoading.observe(this) { isLoading ->
+            requestButton.visibility = if(isLoading) View.GONE else View.VISIBLE
+            requestProgressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+        }
     }
 
     private fun checkLocationPermission() {
