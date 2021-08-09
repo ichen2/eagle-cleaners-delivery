@@ -57,7 +57,7 @@
             android:id="@+id/btn_close_form"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:drawable="@drawable/close"
+            android:background="@drawable/close"
             android:paddingBottom="4dp" />
 
         <TextView
