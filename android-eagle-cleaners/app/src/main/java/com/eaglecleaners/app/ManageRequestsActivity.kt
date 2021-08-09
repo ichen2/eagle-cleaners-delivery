@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -18,81 +19,44 @@ import com.google.firebase.messaging.ktx.messaging
 // TODO: Add notifications for new requests, make address text a link to open google maps
 class ManageRequestsActivity : AppCompatActivity() {
 
-    private lateinit var db: FirebaseFirestore
+    val viewModel: ManageRequestsViewModel by viewModels()
+
     private lateinit var adapter: DeliveryRequestAdapter
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeContainer: SwipeRefreshLayout
-
-    private var requests: MutableList<DeliveryRequest> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_requests)
         recyclerView = findViewById(R.id.delivery_request_list)
         swipeContainer = findViewById(R.id.swipe_container)
-        adapter = DeliveryRequestAdapter(requests, this)
+        adapter = DeliveryRequestAdapter(viewModel.requestsData.value ?: listOf(), this)
         recyclerView.adapter = adapter
-        db = Firebase.firestore
-        swipeContainer.setOnRefreshListener { getRequests() }
-        getRequests()
-        subscribeToMessaging()
+        swipeContainer.setOnRefreshListener { viewModel.getRequests(::displayErrorMessage) }
+        viewModel.getRequests(::displayErrorMessage)
+        viewModel.subscribeToMessaging({
+            Log.d(TAG, "Successfully subscribed to messaging service")
+        }, { task ->
+            val msg = "Failed to subscribe to messaging service"
+            Log.d(TAG, msg, task.exception)
+            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+        })
+        viewModel.requestsAreLoading.observe(this, { requestsAreLoading ->
+            swipeContainer.isRefreshing = requestsAreLoading
+        })
+        viewModel.requestsData.observe(this, {
+            adapter.notifyDataSetChanged()
+        })
     }
 
-    private fun subscribeToMessaging() {
-        // TODO: Move strings to string resources
-        Firebase.messaging.subscribeToTopic("admin")
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    val msg = "Failed to subscribe to messaging service"
-                    Log.d(TAG, msg)
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                }
-                else {
-                    Log.d(TAG, "Successfully subscribed to messaging service")
-                }
-            }
+    fun displayErrorMessage(exception: Exception) {
+        Log.w(TAG, getString(R.string.request_retrieval_failure), exception)
+        Toast.makeText(this, getString(R.string.request_retrieval_failure), Toast.LENGTH_SHORT).show()
     }
 
-    private fun getRequests() {
-        swipeContainer.isRefreshing = true
-        db.collection("delivery-requests")
-            .orderBy("time")
-            .get()
-            .addOnSuccessListener { documents ->
-                // TODO: Instead of completely recreating list, this should just update it, adding the new requests
-                requests.clear()
-                requests.addAll(documents.map { document ->
-                    DeliveryRequest(
-                        document.getString("name") ?: "Error",
-                        DeliveryLocation(document.getString("addressName") ?: "", document.getGeoPoint("addressCoordinates") ?: GeoPoint(0.0, 0.0)),
-                        document.getLong("time") ?: Long.MAX_VALUE,
-                        document.id
-                    )
-                })
-                adapter.notifyDataSetChanged()
-                swipeContainer.isRefreshing = false
-            }
-            .addOnFailureListener { exception ->
-                // TODO: Add a toast for this error
-                Log.w(TAG, "Error getting documents: ", exception)
-                swipeContainer.isRefreshing = false // TODO: Check if there's a 'finally' equivalent for this to prevent repeat of this line
-            }
-    }
-
-    fun removeRequest(position: Int) {
-        db.collection("delivery-requests").document(requests[position].id)
-            .delete()
-            .addOnSuccessListener {
-                requests.removeAt(position)
-                adapter.notifyItemRemoved(position)
-            }
-            .addOnFailureListener {
-                    e -> Log.w(TAG, "Error deleting document", e)
-            }
-    }
 
     companion object {
-        private const val TAG = "ManageRequests"
+        private const val TAG = "ManageRequestsActivity"
     }
 }

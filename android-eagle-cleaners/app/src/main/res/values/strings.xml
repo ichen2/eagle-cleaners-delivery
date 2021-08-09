@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">EagleCleaners</string>
+    <string name="maps_api_key">AIzaSyAKGdfW8Z_95_vDwI0cUME69yvoHnB4yOk</string>
     <string name="admin_login">Admin Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="manage_delivery_requests">Manage Delivery Requests</string>
-    <string name="maps_api_key">AIzaSyAKGdfW8Z_95_vDwI0cUME69yvoHnB4yOk</string>
+    <string name="messaging_failure">Failed to subscribe to messaging service</string>
+    <string name="messaging_success">Successfully subscribed to messaging service</string>
+    <string name="request_retrieval_failure">Error retrieving requests</string>
+    <string name="request_deletion_failure">Error deleting request</string>
 </resources>
