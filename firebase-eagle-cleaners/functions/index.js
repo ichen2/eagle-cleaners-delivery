@@ -31,7 +31,7 @@ exports.requestDelivery = functions.https.onRequest((req, res) => {
     return admin.messaging().send({
       notification: {
         title: "New delivery request",
-        body: "From " + name,
+        body: name,
       },
       topic: "admin",
     });

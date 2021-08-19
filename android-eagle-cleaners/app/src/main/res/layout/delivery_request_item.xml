@@ -5,6 +5,7 @@
     android:id="@+id/swipe_reveal_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?backgroundColor"
     app:mode="same_level"
     app:dragEdge="right">
     <FrameLayout
@@ -26,7 +27,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="?backgroundColor"
         android:padding="12dp"
         android:orientation="horizontal"
         android:gravity="start">
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 tools:text="Ian Chen"
-                android:textColor="@color/black"
+                android:textColor="?colorOnBackground"
                 android:text=""/>
 
             <TextView
@@ -49,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:textColor="@color/purple_700"
+                android:textColor="?colorPrimary"
                 tools:text="303 Demong Dr"
                 android:text="" />
         </LinearLayout>
@@ -59,7 +60,7 @@
             android:layout_height="match_parent"
             android:textSize="16sp"
             tools:text="Requested 4 hours ago"
-            android:textColor="@color/purple_700"
+            android:textColor="?colorOnBackground"
             android:text=""
             android:gravity="end" />
     </LinearLayout>

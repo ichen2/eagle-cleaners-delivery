@@ -49,7 +49,7 @@ open class DeliveryRequestAdapter(private val requests: List<DeliveryRequest>, p
         viewBinderHelper.bind(holder.swipeRevealLayout, request.id)
         holder.setName(request.name)
         holder.setAddress(request.address.name)
-        holder.setTime("Request made ${getTimePassedMessage(Date().time, request.time)} ago")
+        holder.setTime("${getTimePassedMessage(Date().time, request.time)} ago")
         holder.closeButton.setOnClickListener{
             (context as ManageRequestsActivity).viewModel.removeRequest(position) {
                 val msg = context.getString(R.string.request_deletion_failure)

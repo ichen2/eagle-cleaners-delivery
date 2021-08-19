@@ -1,20 +1,19 @@
 package com.eaglecleaners.app
 
-import android.opengl.Visibility
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ProgressBar
+import android.util.Log.d
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+
 
 // TODO: Add notifications for new requests, make address text a link to open google maps
 class ManageRequestsActivity : AppCompatActivity() {
@@ -36,10 +35,10 @@ class ManageRequestsActivity : AppCompatActivity() {
         swipeContainer.setOnRefreshListener { viewModel.getRequests(::displayErrorMessage) }
         viewModel.getRequests(::displayErrorMessage)
         viewModel.subscribeToMessaging({
-            Log.d(TAG, "Successfully subscribed to messaging service")
+            d(TAG, "Successfully subscribed to messaging service")
         }, { task ->
             val msg = "Failed to subscribe to messaging service"
-            Log.d(TAG, msg, task.exception)
+            d(TAG, msg, task.exception)
             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
         viewModel.requestsAreLoading.observe(this, { requestsAreLoading ->
@@ -48,6 +47,15 @@ class ManageRequestsActivity : AppCompatActivity() {
         viewModel.requestsData.observe(this, {
             adapter.notifyDataSetChanged()
         })
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                d(TAG, "Message received")
+                viewModel.getRequests(::displayErrorMessage)
+            }
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+            IntentFilter(MyFirebaseMessagingService.NEW_DELIVERY_INTENT)
+        )
     }
 
     fun displayErrorMessage(exception: Exception) {

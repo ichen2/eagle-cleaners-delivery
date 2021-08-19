@@ -3,12 +3,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:background="?backgroundColor"
         android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/admin_login"
+        android:textColor="?colorOnBackground"
         android:textSize="24sp"/>
 
     <LinearLayout
@@ -20,18 +22,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/email"
+            android:textColor="?colorOnBackground"
             android:textSize="12sp"/>
         <EditText
             android:id="@+id/email_field"
+            android:textColor="?colorOnBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/password"
+            android:textColor="?colorOnBackground"
             android:textSize="12sp"/>
         <EditText
             android:id="@+id/password_field"
+            android:textColor="?colorOnBackground"
             android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -42,5 +48,6 @@
         android:background="?colorPrimary"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="@string/login"/>
+        android:text="@string/login"
+        android:textColor="?colorOnPrimary"/>
 </LinearLayout>
