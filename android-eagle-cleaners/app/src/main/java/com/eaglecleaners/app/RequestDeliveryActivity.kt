@@ -1,6 +1,7 @@
 package com.eaglecleaners.app
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,6 +9,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -16,15 +18,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.Observer
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.GeoPoint
-import com.seatgeek.placesautocomplete.DetailsCallback
-import com.seatgeek.placesautocomplete.OnPlaceSelectedListener
 import com.seatgeek.placesautocomplete.PlacesAutocompleteTextView
-import com.seatgeek.placesautocomplete.model.PlaceDetails
+
 
 // TODO: Add themeing, define string resources
 class RequestDeliveryActivity : AppCompatActivity() {
@@ -75,6 +73,7 @@ class RequestDeliveryActivity : AppCompatActivity() {
         }
         addressField.setOnClearListener {
             viewModel.selectedPlace = null
+            addressField.text.clear()
         }
         nameField = findViewById(R.id.name_field)
         checkLocationPermission()
@@ -158,7 +157,14 @@ class RequestDeliveryActivity : AppCompatActivity() {
             openFormButton.visibility = View.VISIBLE
             openLoginButton.visibility = View.VISIBLE
             infoForm.visibility = View.GONE
+            hideKeyboard(this)
         }
+    }
+
+    private fun hideKeyboard(activity: Activity) {
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(infoForm.windowToken, 0)
+
     }
 
     companion object {

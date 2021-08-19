@@ -107,7 +107,6 @@
             style="@style/PACV.Widget.PlacesAutoCompleteTextView"
             android:inputType="text"
             android:maxLines="1"
-            android:background="?backgroundColor"
             android:textColor="?colorOnBackground"
             app:pacv_clearEnabled="true"
             app:pacv_adapterClass="com.eaglecleaners.app.PlacesAutoCompleteAdapter" />

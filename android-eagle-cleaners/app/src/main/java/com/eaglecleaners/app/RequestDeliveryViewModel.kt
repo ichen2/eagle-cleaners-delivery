@@ -79,6 +79,7 @@ class RequestDeliveryViewModel : ViewModel() {
     }
 
     fun requestDelivery(name: String) {
+        // TODO: Maybe improve input validation here
         if (selectedPlaceDetails != null) {
             requestIsLoading.value = true
             val deliveryRequest = DeliveryRequest(
