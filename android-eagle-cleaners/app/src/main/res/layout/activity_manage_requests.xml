@@ -14,12 +14,15 @@
         android:background="?backgroundColor">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="50dp"
+                android:padding="10dp"
+                android:textAlignment="center"
                 android:text="@string/manage_delivery_requests"
-                android:textColor="?colorOnBackground"
-                android:textSize="24sp"/>
+                android:background="?colorPrimary"
+                android:textColor="?colorOnPrimary"
+                android:textSize="24sp"
+                android:gravity="center_horizontal" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/delivery_request_list"

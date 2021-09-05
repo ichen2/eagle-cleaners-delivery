@@ -27,7 +27,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?backgroundColor"
+        android:background="@drawable/gradient_background"
         android:padding="12dp"
         android:orientation="horizontal"
         android:gravity="start">
