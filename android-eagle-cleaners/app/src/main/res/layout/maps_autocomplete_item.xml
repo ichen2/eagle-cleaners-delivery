@@ -4,5 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    android:textColor="@color/black"
+    android:background="?backgroundColor"
+    android:textColor="?colorOnBackground"
     tools:text="235 Park Ave South, New York, NY, USA"/>

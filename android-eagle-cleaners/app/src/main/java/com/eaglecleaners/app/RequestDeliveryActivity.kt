@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -75,6 +76,10 @@ class RequestDeliveryActivity : AppCompatActivity() {
             viewModel.selectedPlace = null
             addressField.text.clear()
         }
+        addressField.setDropDownBackgroundResource(
+            if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+                == Configuration.UI_MODE_NIGHT_YES) R.color.black else R.color.white
+        )
         nameField = findViewById(R.id.name_field)
         checkLocationPermission()
         // TODO: This logic could probably be simplified
@@ -91,8 +96,8 @@ class RequestDeliveryActivity : AppCompatActivity() {
                 viewModel.initializeMap((fragmentManager.findFragmentById(R.id.map) as MapFragment))
             }
         viewModel.requestIsLoading.observe(this) { isLoading ->
-            requestButton.visibility = if(isLoading) View.GONE else View.VISIBLE
-            requestProgressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+            requestButton.visibility = if (isLoading) View.GONE else View.VISIBLE
+            requestProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
     }
 
